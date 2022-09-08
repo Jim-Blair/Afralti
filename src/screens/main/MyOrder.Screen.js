@@ -1,7 +1,6 @@
 import React, { PureComponent } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-// import SkeletonContent from 'react-native-skeleton-content';
 import LinearGradient from 'react-native-linear-gradient';
 import ShimmerPlaceHolder from 'react-native-shimmer-placeholder';
 import AnimatedNumbers from 'react-native-animated-numbers';

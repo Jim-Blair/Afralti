@@ -1,5 +1,6 @@
-const breakfastOrder = [];
-const lunchOrder = [];
+/* eslint-disable import/no-mutable-exports */
+let breakfastOrder = [];
+let lunchOrder = [];
 
 const addMealItem = ({ id, mealName, kind }) => {
   if (kind === 'brkfst') {
@@ -55,4 +56,9 @@ const minusMealItem = ({ id, kind }) => {
   }
 };
 
-export { breakfastOrder, lunchOrder, addMealItem, minusMealItem };
+const resetOrder = () => {
+  breakfastOrder = [];
+  lunchOrder = [];
+};
+
+export { breakfastOrder, lunchOrder, addMealItem, minusMealItem, resetOrder };

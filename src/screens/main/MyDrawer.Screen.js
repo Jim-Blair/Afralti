@@ -3,7 +3,6 @@ import React from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 
 import Home from './Home.Screen';
-// import Settings from './Settings.Screen';
 import MyOrder from './MyOrder.Screen';
 import Goodbye from './GoodBye.Screen';
 
@@ -25,7 +24,6 @@ function MyDrawer() {
         drawerActiveBackgroundColor: TAN,
       }}>
       <Drawer.Screen name="Home" component={Home} />
-      {/* <Drawer.Screen name="Settings" component={Settings} /> */}
       <Drawer.Screen name="My Order" component={MyOrder} />
       <Drawer.Screen name="Sign Out" component={Goodbye} />
     </Drawer.Navigator>

@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { Text, View, Easing, StyleSheet } from 'react-native';
+import React, { PureComponent } from 'react';
+import { View, StyleSheet } from 'react-native';
 
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
     borderColor: '#A8A29E',
     borderRadius: 15,
     backgroundColor: 'white',
-    padding: 3,
+    padding: 4,
   },
   quantity: {
     fontSize: 22,
@@ -35,11 +35,11 @@ const styles = StyleSheet.create({
     borderColor: '#D6D3D1',
     borderRadius: 15,
     backgroundColor: TAN,
-    padding: 3,
+    padding: 3.5,
   },
 });
 
-class QuantitySelector extends Component {
+class QuantitySelector extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
@@ -51,13 +51,8 @@ class QuantitySelector extends Component {
     this.tallyItem();
   }
 
-  componentDidUpdate(prevProps) {
-    if (prevProps.totalOrder !== this.props.totalOrder) {
-      this.tallyItem();
-    }
-  }
-
   tallyItem = () => {
+    // I'm not sure if we need this anymore
     const { id, kind } = this.props;
     let idx = -1;
 
@@ -73,38 +68,30 @@ class QuantitySelector extends Component {
       } else {
         this.setState({ selected: lunchOrder[idx].quantity });
       }
-    } else {
-      // important for when we remove an item from Checkout
-      this.setState({ selected: 0 });
     }
   };
 
   addQuantity = () => {
     const { id, mealName, kind } = this.props;
 
-    this.props.addItemAct();
-    addMealItem({ id, mealName, kind });
+    this.setState(prevState => ({ selected: prevState.selected + 1 })); // increment locally
+    this.props.addItemAct(); // add total
+    addMealItem({ id, mealName, kind }); // construct array
   };
 
   minusQuantity = () => {
     const { selected } = this.state;
-    const { id, kind, hideItem } = this.props;
+    const { id, kind } = this.props;
 
     if (selected > 0) {
-      minusMealItem({ id, kind });
-      this.props.removeItemAct();
-
-      if (selected === 1) {
-        if (hideItem) {
-          hideItem();
-        }
-      }
+      this.setState(prevState => ({ selected: prevState.selected - 1 })); // decrement locally
+      this.props.removeItemAct(); // reduce total
+      minusMealItem({ id, kind }); // update array
     }
   };
 
   render() {
     const { selected } = this.state;
-    console.log('rendered');
 
     return (
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -115,11 +102,9 @@ class QuantitySelector extends Component {
           style={styles.minus}
           onPress={this.minusQuantity}
         />
-        {/* <Text style={styles.quantity}>{selected}</Text> */}
         <AnimatedNumbers
           animateToNumber={selected}
-          animationDuration={200}
-          easing={Easing.linear}
+          animationDuration={800}
           fontStyle={styles.quantity}
         />
         <Icons
@@ -138,17 +123,8 @@ QuantitySelector.propTypes = {
   id: PropTypes.string.isRequired,
   mealName: PropTypes.string.isRequired,
   kind: PropTypes.string.isRequired,
-  totalOrder: PropTypes.number.isRequired,
   addItemAct: PropTypes.func.isRequired,
   removeItemAct: PropTypes.func.isRequired,
-  // eslint-disable-next-line react/require-default-props
-  hideItem: PropTypes.func,
 };
 
-const mapStateToProps = ({ orders }) => ({
-  totalOrder: orders.totalOrder,
-});
-
-export default connect(mapStateToProps, { addItemAct, removeItemAct })(
-  QuantitySelector,
-);
+export default connect(null, { addItemAct, removeItemAct })(QuantitySelector);

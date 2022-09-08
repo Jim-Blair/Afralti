@@ -7,3 +7,7 @@ export const addItemAct = () => ({
 export const removeItemAct = () => ({
   type: OrderTypes.REMOVE_ITEM,
 });
+
+export const resetItemsAct = () => ({
+  type: OrderTypes.RESET_ITEMS,
+});

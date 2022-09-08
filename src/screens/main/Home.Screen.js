@@ -12,6 +12,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import Icons from 'react-native-vector-icons/Feather';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import AnimatedNumbers from 'react-native-animated-numbers';
 
 import HomeMealCard from '../../components/MealCards/HomeMealCard.Component';
 
@@ -176,6 +177,7 @@ class Home extends Component {
     this.state = {
       greeting: '',
       username: '',
+      showItems: false,
     };
   }
 
@@ -189,6 +191,10 @@ class Home extends Component {
       .catch(e => {
         console.error('failed to fetch username: ', e);
       });
+
+    setTimeout(() => {
+      this.setState({ showItems: true });
+    }, 3000);
   }
 
   getGreeting = () => {
@@ -197,15 +203,15 @@ class Home extends Component {
 
     if (hr < 12) {
       return 'Good Morning';
-    } else if (hr < 16) {
-      return 'Good Afternoon';
-    } else {
-      return 'Good Evening';
     }
+    if (hr < 16) {
+      return 'Good Afternoon';
+    }
+    return 'Good Evening';
   };
 
   render() {
-    const { username, greeting } = this.state;
+    const { username, greeting, showItems } = this.state;
     const { totalOrder } = this.props;
 
     return (
@@ -231,13 +237,14 @@ class Home extends Component {
             style={styles.checkoutBtn}
             onPress={() => {
               if (totalOrder > 0) {
-                this.props.navigation.push('Checkout');
+                this.props.navigation.push('CheckoutReceipt');
               }
             }}>
             <View style={styles.checkoutContent}>
-              <Text style={[styles.checkoutTxt, { fontWeight: 'bold' }]}>
-                {totalOrder}
-              </Text>
+              <AnimatedNumbers
+                animateToNumber={totalOrder}
+                fontStyle={[styles.checkoutTxt, { fontWeight: 'bold' }]}
+              />
               <Text style={styles.checkoutTxt}> Checkout</Text>
               <Icons
                 name="chevron-right"
@@ -255,8 +262,16 @@ class Home extends Component {
             {menu.breakfast.map(meal => {
               return (
                 <View key={meal[0].id}>
-                  <HomeMealCard {...meal[0]} kind="brkfst" />
-                  <HomeMealCard {...meal[1]} kind="brkfst" />
+                  <HomeMealCard
+                    {...meal[0]}
+                    kind="brkfst"
+                    showItems={showItems}
+                  />
+                  <HomeMealCard
+                    {...meal[1]}
+                    kind="brkfst"
+                    showItems={showItems}
+                  />
                 </View>
               );
             })}
@@ -267,8 +282,16 @@ class Home extends Component {
             {menu.lunch.map(meal => {
               return (
                 <View key={meal[0].id}>
-                  <HomeMealCard {...meal[0]} kind="lunch" />
-                  <HomeMealCard {...meal[1]} kind="lunch" />
+                  <HomeMealCard
+                    {...meal[0]}
+                    kind="lunch"
+                    showItems={showItems}
+                  />
+                  <HomeMealCard
+                    {...meal[1]}
+                    kind="lunch"
+                    showItems={showItems}
+                  />
                 </View>
               );
             })}

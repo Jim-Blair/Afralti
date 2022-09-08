@@ -11,7 +11,7 @@ import Landing from './src/screens/Landing.Screen';
 import SignIn from './src/screens/auth/SignIn.Screen';
 import SignUp from './src/screens/auth/SignUp.Screen';
 import MyDrawer from './src/screens/main/MyDrawer.Screen';
-import Checkout from './src/screens/main/Checkout.Screen';
+import CheckoutReceipt from './src/screens/main/CheckoutReceipt.Screen';
 import Blank from './src/screens/auth/Blank.Screen';
 
 import { restoreTokenAction } from './src/redux/auth/auth.actions';
@@ -74,7 +74,7 @@ class App extends PureComponent {
     return (
       <>
         <Stack.Screen name="MyDrawer" component={MyDrawer} />
-        <Stack.Screen name="Checkout" component={Checkout} />
+        <Stack.Screen name="CheckoutReceipt" component={CheckoutReceipt} />
       </>
     );
   };

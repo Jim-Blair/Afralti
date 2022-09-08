@@ -19,6 +19,12 @@ const orderReducer = (state = initialState, action) => {
         totalOrder: state.totalOrder - 1,
       };
 
+    case OrderTypes.RESET_ITEMS:
+      return {
+        ...state,
+        totalOrder: 0,
+      };
+
     default:
       return state;
   }
