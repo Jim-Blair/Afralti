@@ -1,33 +1,22 @@
 import React, { PureComponent } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { SafeAreaView, View, Text, StyleSheet, ScrollView } from 'react-native';
 
-import LinearGradient from 'react-native-linear-gradient';
-import ShimmerPlaceHolder from 'react-native-shimmer-placeholder';
-import AnimatedNumbers from 'react-native-animated-numbers';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import Icons from 'react-native-vector-icons/Feather';
 
-import { TAN, GREEN } from '../../utils/constants';
+import { BLACK } from '../../utils/constants';
+
+import globalStyles from '../../utils/globalStyles';
+
+import Receipt from '../../components/MyOrder/Receipt.Component';
 
 const styles = StyleSheet.create({
-  minus: {
-    borderWidth: 0.5,
-    borderColor: '#A8A29E',
-    borderRadius: 15,
-    backgroundColor: 'white',
-    padding: 3,
-  },
-  quantity: {
-    fontSize: 22,
-    paddingHorizontal: 10,
-    fontWeight: 'bold',
-    color: '#57534E',
-  },
-  plus: {
-    borderWidth: 0.5,
-    borderColor: '#D6D3D1',
-    borderRadius: 15,
-    backgroundColor: TAN,
-    padding: 3,
+  menuIcon: {
+    paddingRight: 10,
+    paddingLeft: 12,
   },
 });
 
@@ -35,69 +24,87 @@ class MyOrder extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      visible: false,
-      selected: 0,
+      dayOrders: [],
     };
   }
 
   componentDidMount() {
-    setTimeout(() => {
-      this.setState({ visible: true });
-    }, 3000);
+    this.fetchOrders();
   }
 
-  addQuantity = () => {
-    this.setState({ selected: this.state.selected + 1 });
-  };
+  componentDidUpdate(prevProps) {
+    if (
+      prevProps.totalOrder !== this.props.totalOrder &&
+      this.props.totalOrder === 0
+    ) {
+      // then it means we've just sent a new order (also called if we reset totalOrder to 0 from Home.Screen unfortunately)
+      this.fetchOrders();
+    }
+  }
 
-  minusQuantity = () => {
-    this.setState({ selected: this.state.selected - 1 });
+  fetchOrders = () => {
+    AsyncStorage.getItem('currentOrder')
+      .then(data => {
+        this.setState({ dayOrders: JSON.parse(data) });
+      })
+      .catch(e => console.error('failed to fetch the orders: ', e));
   };
 
   render() {
-    const { visible, selected } = this.state;
+    const { dayOrders } = this.state;
 
     return (
-      <View>
-        <Text>My Order</Text>
-        <ShimmerPlaceHolder
-          visible={visible}
-          style={{
-            borderRadius: 5,
-            padding: 0,
-            alignSelf: 'flex-start',
-          }}
-          width={100}
-          LinearGradient={LinearGradient}>
-          <Text>Hello</Text>
-        </ShimmerPlaceHolder>
+      <SafeAreaView style={globalStyles.screen}>
+        {/* header */}
+        <View style={{ flexDirection: 'row' }}>
+          <Icons
+            name="menu"
+            color={BLACK}
+            size={17}
+            onPress={this.props.navigation.openDrawer}
+            style={styles.menuIcon}
+          />
 
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Icons
-            name="minus"
-            color={GREEN}
-            size={22}
-            style={styles.minus}
-            onPress={this.minusQuantity}
-          />
-          {/* <Text style={styles.quantity}>{selected}</Text> */}
-          <AnimatedNumbers
-            animateToNumber={selected}
-            animationDuration={800}
-            // easing={Easing.linear}
-            fontStyle={styles.quantity}
-          />
-          <Icons
-            name="plus"
-            color={GREEN}
-            size={24}
-            style={styles.plus}
-            onPress={this.addQuantity}
-          />
+          <Text style={{ fontSize: 21, color: BLACK, lineHeight: 21 }}>
+            My Order
+          </Text>
         </View>
-      </View>
+
+        {/* body */}
+        <ScrollView style={{ paddingHorizontal: 20, marginTop: 20 }}>
+          {dayOrders.map(dayMeals => {
+            return <Receipt key={dayMeals.index} dayMeals={dayMeals} />;
+          })}
+        </ScrollView>
+      </SafeAreaView>
     );
   }
 }
 
-export default MyOrder;
+MyOrder.propTypes = {
+  navigation: PropTypes.shape({
+    openDrawer: PropTypes.func.isRequired,
+  }).isRequired,
+  totalOrder: PropTypes.number.isRequired,
+};
+
+const mapStateToProps = ({ orders }) => ({
+  totalOrder: orders.totalOrder,
+});
+
+export default connect(mapStateToProps)(MyOrder);
+
+/*
+THE DATA LOOKS LIKE THIS
+
+const hmm = [
+  [
+    [
+      { id: '3', mealName: 'Chapati', quantity: 1 },
+      { id: '1', mealName: 'Queencake', quantity: 1 },
+      { id: '2', mealName: 'Samosa', quantity: 2 },
+    ],
+    [],
+  ],
+];
+*/

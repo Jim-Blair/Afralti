@@ -41,6 +41,19 @@ const globalStyles = StyleSheet.create({
     height: '100%',
     paddingTop: 10,
   },
+  receiptCont: {
+    backgroundColor: '#FFFFFF',
+    paddingLeft: 10,
+    paddingRight: 30,
+    paddingBottom: 30,
+  },
+  mealTitle: {
+    fontSize: 20,
+    fontFamily: 'IBMBold',
+    marginTop: 20,
+    marginBottom: 10,
+    color: BLACK,
+  },
 });
 
 export default globalStyles;

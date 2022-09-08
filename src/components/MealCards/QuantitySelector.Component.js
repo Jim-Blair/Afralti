@@ -7,12 +7,7 @@ import Icons from 'react-native-vector-icons/Feather';
 import AnimatedNumbers from 'react-native-animated-numbers';
 
 import { TAN, GREEN } from '../../utils/constants';
-import {
-  addMealItem,
-  breakfastOrder,
-  lunchOrder,
-  minusMealItem,
-} from '../../utils/Order';
+import { addMealItem, minusMealItem } from '../../utils/Order';
 
 import { addItemAct, removeItemAct } from '../../redux/order/order.actions';
 
@@ -47,30 +42,6 @@ class QuantitySelector extends PureComponent {
     };
   }
 
-  componentDidMount() {
-    this.tallyItem();
-  }
-
-  tallyItem = () => {
-    // I'm not sure if we need this anymore
-    const { id, kind } = this.props;
-    let idx = -1;
-
-    if (kind === 'brkfst') {
-      idx = breakfastOrder.findIndex(m => m.id === id);
-    } else {
-      idx = lunchOrder.findIndex(m => m.id === id);
-    }
-
-    if (idx !== -1) {
-      if (kind === 'brkfst') {
-        this.setState({ selected: breakfastOrder[idx].quantity });
-      } else {
-        this.setState({ selected: lunchOrder[idx].quantity });
-      }
-    }
-  };
-
   addQuantity = () => {
     const { id, mealName, kind } = this.props;
 
@@ -92,6 +63,7 @@ class QuantitySelector extends PureComponent {
 
   render() {
     const { selected } = this.state;
+    console.log('rendered');
 
     return (
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>

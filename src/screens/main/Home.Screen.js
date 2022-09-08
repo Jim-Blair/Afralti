@@ -178,6 +178,8 @@ class Home extends Component {
       greeting: '',
       username: '',
       showItems: false,
+      breakfast: menu.breakfast,
+      lunch: menu.lunch,
     };
   }
 
@@ -197,6 +199,18 @@ class Home extends Component {
     }, 3000);
   }
 
+  componentDidUpdate(prevProps) {
+    if (
+      prevProps.totalOrder !== this.props.totalOrder &&
+      this.props.totalOrder === 0
+    ) {
+      console.log('reset happened');
+      this.setState({ breakfast: [], lunch: [] }, () => {
+        this.setState({ breakfast: menu.breakfast, lunch: menu.lunch });
+      });
+    }
+  }
+
   getGreeting = () => {
     const dt = new Date();
     const hr = dt.getHours();
@@ -211,8 +225,10 @@ class Home extends Component {
   };
 
   render() {
-    const { username, greeting, showItems } = this.state;
+    const { username, greeting, showItems, breakfast, lunch } = this.state;
     const { totalOrder } = this.props;
+
+    console.log('home');
 
     return (
       <View style={globalStyles.screen}>
@@ -259,7 +275,7 @@ class Home extends Component {
         <ScrollView style={styles.scrll}>
           <Text style={styles.mealTitle}>Breakfast</Text>
           <ScrollView horizontal>
-            {menu.breakfast.map(meal => {
+            {breakfast.map(meal => {
               return (
                 <View key={meal[0].id}>
                   <HomeMealCard
@@ -279,7 +295,7 @@ class Home extends Component {
 
           <Text style={styles.mealTitle}>Lunch</Text>
           <ScrollView horizontal>
-            {menu.lunch.map(meal => {
+            {lunch.map(meal => {
               return (
                 <View key={meal[0].id}>
                   <HomeMealCard

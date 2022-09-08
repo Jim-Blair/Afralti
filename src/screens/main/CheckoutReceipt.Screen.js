@@ -5,6 +5,7 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
+  ToastAndroid,
 } from 'react-native';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -22,20 +23,9 @@ import { resetItemsAct } from '../../redux/order/order.actions';
 
 import ReceiptItem from '../../components/MealCards/ReceiptItem.Component';
 
+import globalStyles from '../../utils/globalStyles';
+
 const styles = StyleSheet.create({
-  mealTitle: {
-    fontSize: 20,
-    fontFamily: 'IBMBold',
-    marginTop: 20,
-    marginBottom: 10,
-    color: BLACK,
-  },
-  receiptCont: {
-    backgroundColor: '#FFFFFF',
-    paddingLeft: 10,
-    paddingRight: 30,
-    paddingBottom: 30,
-  },
   date: { fontFamily: 'IBMMed', marginTop: 5 },
   line: {
     marginTop: 30,
@@ -70,14 +60,33 @@ class CheckoutReceipt extends Component {
     const { date } = this.state;
 
     try {
-      const stringOrder = JSON.stringify([breakfastOrder, lunchOrder]);
+      const currentOrder = await AsyncStorage.getItem('currentOrder');
+
+      let currentArray;
+
+      if (!currentOrder) {
+        // i.e first time task ran
+        currentArray = [];
+      } else {
+        currentArray = JSON.parse(currentOrder);
+      }
+
+      currentArray.push([breakfastOrder, lunchOrder]);
+
+      const stringOrder = JSON.stringify(currentArray);
 
       const orderDate = ['orderDate', date.toLocaleDateString()];
       const theOrder = ['currentOrder', stringOrder];
       await AsyncStorage.multiSet([orderDate, theOrder]);
 
-      resetOrder();
       this.props.resetItemsAct();
+      resetOrder();
+
+      ToastAndroid.show('Your order has been sent', ToastAndroid.SHORT);
+
+      setTimeout(() => {
+        this.props.navigation.pop();
+      }, 1000);
     } catch (e) {
       console.error('failed to store order: ', e);
     }
@@ -104,7 +113,7 @@ class CheckoutReceipt extends Component {
               backgroundColor={TAN}
             />
             <View
-              style={styles.receiptCont}
+              style={globalStyles.receiptCont}
               onLayout={e => {
                 this.top.onLayout(e);
                 this.bottom.onLayout(e);
@@ -112,7 +121,7 @@ class CheckoutReceipt extends Component {
               <Text style={styles.date}>{date.toDateString()}</Text>
 
               {breakfastOrder.length > 0 && (
-                <Text style={styles.mealTitle}>Breakfast</Text>
+                <Text style={globalStyles.mealTitle}>Breakfast</Text>
               )}
               {breakfastOrder.map(meal => {
                 return (
@@ -125,7 +134,9 @@ class CheckoutReceipt extends Component {
               })}
 
               {lunchOrder.length > 0 && (
-                <Text style={[styles.mealTitle, { marginTop: 30 }]}>Lunch</Text>
+                <Text style={[globalStyles.mealTitle, { marginTop: 30 }]}>
+                  Lunch
+                </Text>
               )}
               {lunchOrder.map(meal => {
                 return (
