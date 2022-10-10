@@ -37,11 +37,12 @@ class Receipt extends PureComponent {
           )}
           {dayMeals[0].map(meal => {
             return (
-              <ReceiptItem
-                key={meal.id}
-                mealName={meal.mealName}
-                quantity={meal.quantity}
-              />
+              <View key={meal.id}>
+                <ReceiptItem
+                  mealName={meal.mealName}
+                  quantity={meal.quantity}
+                />
+              </View>
             );
           })}
 
@@ -50,11 +51,12 @@ class Receipt extends PureComponent {
           )}
           {dayMeals[1].map(meal => {
             return (
-              <ReceiptItem
-                key={meal.id}
-                mealName={meal.mealName}
-                quantity={meal.quantity}
-              />
+              <View key={meal.id}>
+                <ReceiptItem
+                  mealName={meal.mealName}
+                  quantity={meal.quantity}
+                />
+              </View>
             );
           })}
         </View>

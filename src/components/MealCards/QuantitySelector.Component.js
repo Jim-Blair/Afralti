@@ -63,7 +63,6 @@ class QuantitySelector extends PureComponent {
 
   render() {
     const { selected } = this.state;
-    console.log('rendered');
 
     return (
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>

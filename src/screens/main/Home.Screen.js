@@ -204,7 +204,6 @@ class Home extends Component {
       prevProps.totalOrder !== this.props.totalOrder &&
       this.props.totalOrder === 0
     ) {
-      console.log('reset happened');
       this.setState({ breakfast: [], lunch: [] }, () => {
         this.setState({ breakfast: menu.breakfast, lunch: menu.lunch });
       });
@@ -227,8 +226,6 @@ class Home extends Component {
   render() {
     const { username, greeting, showItems, breakfast, lunch } = this.state;
     const { totalOrder } = this.props;
-
-    console.log('home');
 
     return (
       <View style={globalStyles.screen}>

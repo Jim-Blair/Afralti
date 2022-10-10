@@ -32,7 +32,24 @@ class App extends PureComponent {
       .catch(e => {
         console.error('fetching of userToken failed: ', e);
       });
+
+    this.checkOrder();
   }
+
+  checkOrder = async () => {
+    try {
+      const orderDate = await AsyncStorage.getItem('orderDate');
+
+      const dt = new Date();
+      const currentDate = dt.toLocaleDateString();
+
+      if (orderDate !== currentDate) {
+        await AsyncStorage.removeItem('currentOrder');
+      }
+    } catch (e) {
+      console.error('checking order failed: ', e);
+    }
+  };
 
   Content = () => {
     const { userToken, tokenLoading } = this.props;

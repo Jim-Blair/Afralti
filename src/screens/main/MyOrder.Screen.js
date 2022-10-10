@@ -45,7 +45,9 @@ class MyOrder extends PureComponent {
   fetchOrders = () => {
     AsyncStorage.getItem('currentOrder')
       .then(data => {
-        this.setState({ dayOrders: JSON.parse(data) });
+        if (data) {
+          this.setState({ dayOrders: JSON.parse(data) });
+        }
       })
       .catch(e => console.error('failed to fetch the orders: ', e));
   };
@@ -72,8 +74,13 @@ class MyOrder extends PureComponent {
 
         {/* body */}
         <ScrollView style={{ paddingHorizontal: 20, marginTop: 20 }}>
-          {dayOrders.map(dayMeals => {
-            return <Receipt key={dayMeals.index} dayMeals={dayMeals} />;
+          {dayOrders.map((dayMeals, index) => {
+            return (
+              // eslint-disable-next-line react/no-array-index-key
+              <View key={index}>
+                <Receipt dayMeals={dayMeals} />
+              </View>
+            );
           })}
         </ScrollView>
       </SafeAreaView>
